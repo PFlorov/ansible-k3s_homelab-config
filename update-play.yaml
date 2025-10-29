@@ -1,0 +1,12 @@
+- name: Update and Upgrade packages
+  hosts: k3s_cluster
+  become: yes
+  tasks:
+
+    - name: update packages
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: upgrade
+      ansible.builtin.apt:
+        upgrade: dist
