@@ -1,0 +1,35 @@
+---
+
+- name: Check k3s cluster status
+  hosts: k3s_masters
+  become: yes
+  tasks:
+
+    - name: Check k3s service status
+      ansible.builtin.systemd:
+        name: k3s
+      register: k3s_service
+
+    - name: Get k3s nodes
+      ansible.builtin.shell: k3s kubectl get nodes
+      register: k3s_nodes
+
+    - name: Display cluster status
+      debug:
+        msg: |
+          k3s service: {{ k3s_service.status.ActiveState }}
+          cluster nodes: {{ k3s_nodes.stdout }}
+
+- name: Check worker nodes
+  hosts: k3s_workers
+  become: yes
+  tasks:
+
+    - name: Check k3s agent status
+      ansible.builtin.systemd:
+        name: k3s-agent
+      register: k3s_agent
+
+    - name: Display agent status
+      debug:
+        msg: "k3s agent: {{ k3s_agent.status.ActiveState }}"
